@@ -43,8 +43,11 @@ const MAX_GANADORES = +args['max-ganadores'] || 120;
 const MAX_NUEVOS = +args['max-nuevos'] || 60;
 const MAX_APAGADOS = +args['max-apagados'] || 60;
 const MAX_DESCUBRIR = +args['max-descubrir'] || 150;
-fs.mkdirSync(path.join(OUT, 'img'), { recursive: true });
-fs.mkdirSync(path.join(OUT, 'paginas'), { recursive: true });
+const COMANDOS = ['marca', 'descubrir', 'paginas', 'resumen', 'imagenes'];
+if (COMANDOS.includes(cmd)) {
+  fs.mkdirSync(path.join(OUT, 'img'), { recursive: true });
+  fs.mkdirSync(path.join(OUT, 'paginas'), { recursive: true });
+}
 
 function hoy() { return new Date().toISOString().slice(0, 10); }
 const log = (...m) => console.log('[spy]', ...m);
@@ -63,7 +66,7 @@ async function abrirNavegador() {
 }
 
 // El navegador también arma las hojas de contacto con canvas, por eso lo abre hasta el comando resumen.
-const browser = ['marca', 'descubrir', 'paginas', 'resumen', 'imagenes'].includes(cmd) ? await abrirNavegador() : null;
+const browser = COMANDOS.includes(cmd) ? await abrirNavegador() : null;
 const ctx = await browser?.newContext({
   locale: 'es-AR',
   viewport: { width: 1366, height: 900 },
@@ -686,7 +689,9 @@ try {
     console.log('Uso: node scrape.mjs marca --ig <usuario|link> --web <dominio> [--nicho fitness] --out <carpeta>');
     console.log('     node scrape.mjs descubrir --q "palabra" [--q ...] --pais AR --out <carpeta>');
     console.log('     node scrape.mjs paginas --pagina <id|nombre|link> [--pagina ...] [--propia <id|nombre>] --pais AR --out <carpeta>');
-    process.exit(1);
+    console.log('     node scrape.mjs imagenes --out <carpeta>');
+    console.log('     node scrape.mjs resumen --out <carpeta>');
+    process.exit(cmd ? 1 : 0);
   }
 } finally {
   await browser?.close();
