@@ -99,7 +99,7 @@ Escribe `<carpeta>/analisis.json` con la forma de `<skill>/plantilla-analisis.js
 - `marca_leida` es lo que entendiste de la marca en el paso 3. Va en la pestaña "Tu marca".
 - `notas` es una frase por anuncio, por ID, que aparece arriba de su tarjeta en la pestaña "Anuncios". Escríbela para los ganadores y los apagados más reveladores; el resto lleva una nota automática.
 - Los `anuncios` y los `inspirado_en` son IDs de `resumen.json`, y el informe los muestra como miniaturas que abren el anuncio: cita evidencia real en cada punto.
-- Cada punto, una o dos frases concretas con números: "AMAIP lleva 63 días con el mismo video del profesorado y es su #2 en impresiones", no "usan videos".
+- Cada punto, una o dos frases concretas con números: "La marca X lleva 63 días con el mismo video testimonial y es su #2 en impresiones", no "usan videos".
 
 ## 8. Armar y entregar
 

@@ -418,6 +418,22 @@ const PAISES = [
   ['ES', /\.es\b|\+34\s?\d|es-ES/i], ['US', /\+1\s?\(?\d{3}|en-US/i],
 ];
 
+// Acepta el aviso de cookies si aparece: si no, tapa la captura de la web y sus botones se cuelan entre los de la marca.
+async function aceptarCookies(page) {
+  const re = /^(aceptar|acepto|aceptar todas?|aceptar todo|aceptar cookies|aceptar y cerrar|permitir todas?|permitir todo|entendido|de acuerdo|accept|accept all|accept all cookies|accept cookies|allow all|i agree|agree|got it|aceitar|aceitar todos|ok)$/i;
+  for (const frame of page.frames()) {
+    const ok = await frame.evaluate((src) => {
+      const re = new RegExp(src, 'i');
+      const b = [...document.querySelectorAll('button,a,[role="button"],input[type="button"],input[type="submit"]')]
+        .find((el) => el.getClientRects().length && re.test((el.innerText || el.value || '').replace(/\s+/g, ' ').trim()));
+      if (b) b.click();
+      return !!b;
+    }, re.source).catch(() => false);
+    if (ok) { await page.waitForTimeout(1500); return true; }
+  }
+  return false;
+}
+
 async function leerWeb(url) {
   if (!/^https?:/.test(url)) url = 'https://' + url;
   const page = await ctx.newPage();
@@ -432,7 +448,7 @@ async function leerWeb(url) {
       descripcion: meta('description') || meta('og:description'),
       idioma: document.documentElement.lang || '',
       encabezados: [...document.querySelectorAll('h1,h2,h3')].map((h) => t(h.innerText)).filter(Boolean).slice(0, 30),
-      botones: [...new Set([...document.querySelectorAll('button,a[class*="btn"],a[class*="button"],[role="button"]')].map((b) => t(b.innerText)).filter((x) => x && x.length < 40))].slice(0, 25),
+      botones: [...new Set([...document.querySelectorAll('button,a[class*="btn"],a[class*="button"],[role="button"]')].filter((b) => b.getClientRects().length).map((b) => t(b.innerText)).filter((x) => x && x.length < 40))].slice(0, 25),
       texto: t(document.body?.innerText).slice(0, 6000),
       links,
       seguimiento: {
@@ -446,6 +462,7 @@ async function leerWeb(url) {
   try {
     await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 45000 });
     await page.waitForTimeout(3500);
+    await aceptarCookies(page);
     const inicio = await extraer();
     const destino = path.join(OUT, 'img', 'marca-web.jpg');
     await page.screenshot({ path: destino, type: 'jpeg', quality: 72 });
@@ -467,7 +484,7 @@ async function leerWeb(url) {
     const redes = inicio.links.map((l) => l.href).filter((h) => /instagram\.com|facebook\.com|tiktok\.com|youtube\.com|wa\.me|whatsapp/i.test(h));
     return {
       ...inicio, links: undefined,
-      precios: [...new Set(todo.match(/(?:US\$|USD|ARS|AR\$|MXN|CLP|COP|€|\$|S\/)\s?\d[\d.,]*(?:\s?(?:USD|ARS|MXN|CLP|COP|EUR))?/g) || [])].slice(0, 20),
+      precios: [...new Set(todo.match(/(?:US\$|USD|ARS|AR\$|MXN|CLP|COP|€|\$|S\/)\s?\d[\d.,]*(?:\s?(?:USD|ARS|MXN|CLP|COP|EUR))?|\d[\d.,]*\s?(?:€|EUR\b|USD\b)/g) || [])].slice(0, 20),
       redes: [...new Set(redes)].slice(0, 10),
       paginas,
       captura: 'img/marca-web.jpg',
