@@ -1,0 +1,66 @@
+{
+  "titulo": "Una frase que diga lo más importante, como un titular",
+  "titulo_corto": "Espía de Tu Marca",
+  "bajada": "Tu marca frente a 5 competidores: 412 anuncios activos leídos el 6 nov 2026 en Argentina.",
+  "consulta": "/spy instagram.com/tumarca, web: tumarca.com, nicho: fitness",
+  "marca": "Nombre de la marca del usuario",
+  "orden": ["page_id del competidor 1", "page_id del competidor 2"],
+  "titulo_veredicto": "Lo más importante",
+  "veredicto": [
+    "3 a 5 frases cortas con números, de lo más importante a lo menos.",
+    "La última es la acción número uno para la marca del usuario: el informe la resalta."
+  ],
+  "marca_leida": {
+    "resumen": "Dos o tres frases: qué es la marca, qué la diferencia y cómo se ve hoy en Meta.",
+    "producto": "Qué vende, en pocas palabras.",
+    "oferta": "La oferta o promo vigente.",
+    "precio": "Precios que encontraste, con su moneda.",
+    "publico": "A quién le habla.",
+    "tono": "Cómo habla: cercano, técnico, motivacional.",
+    "fortalezas": [
+      { "texto": "Qué ya hace bien, con la evidencia.", "anuncios": ["id de un anuncio propio, si hay"] }
+    ],
+    "huecos": [
+      { "texto": "Qué le falta frente a la competencia.", "anuncios": ["id de un anuncio de la competencia que lo hace bien"] }
+    ]
+  },
+  "notas": {
+    "id del anuncio": "Una frase de por qué importa este anuncio. Va arriba de su tarjeta."
+  },
+  "competidores": {
+    "page_id del competidor 1": {
+      "resumen": "Una o dos frases: cómo anuncia esta marca y qué la diferencia.",
+      "funciona": [
+        { "texto": "Qué le funciona, con la evidencia en números.", "anuncios": ["id", "id"] }
+      ],
+      "no_funciona": [
+        { "texto": "Qué probó y apagó rápido, y en qué se diferencia de sus ganadores.", "anuncios": ["id de un apagado rápido"] }
+      ]
+    }
+  },
+  "patrones": [
+    { "titulo": "Nombre corto del patrón", "detalle": "Qué se repite entre competidores y por qué importa.", "anuncios": ["id", "id"] }
+  ],
+  "tu_marca": {
+    "diagnostico": "Cómo está la marca frente a la competencia. Si no anuncia, qué hueco puede ocupar.",
+    "cuenta": [
+      { "texto": "Recomendación concreta para la cuenta publicitaria.", "anuncios": [] }
+    ],
+    "anuncios": [
+      {
+        "concepto": "Nombre del concepto",
+        "formato": "Video vertical 9:16 con creador",
+        "visual": "Qué se ve en la creatividad, en una línea.",
+        "gancho": "Primera línea o primeros 3 segundos.",
+        "copy": "Texto principal listo para pegar.",
+        "titulo": "Título del anuncio",
+        "cta": "Comprar",
+        "por_que": "Qué anuncio ganador lo inspira y por qué debería funcionar para esta marca.",
+        "inspirado_en": ["id", "id"]
+      }
+    ],
+    "plan": [
+      { "paso": "Semana 1: qué lanzar", "detalle": "Presupuesto, cantidad de anuncios y regla para apagar o escalar." }
+    ]
+  }
+}
