@@ -582,7 +582,9 @@ async function leerMarca() {
   try { dominio = new URL(w.url || '').hostname.replace(/^www\./, ''); } catch {}
   salida.biblioteca = await buscarAnunciante({ nombres: [ig.nombre, ig.usuario, w.titulo?.split(/[|\-–·:]/)[0]?.trim()], dominio });
   const pista = [w.idioma, dominio, w.texto, ...(w.precios || []), ig.bio].join(' ');
-  salida.pais_probable = PAISES.find(([, re]) => re.test(pista))?.[0] || null;
+  // Sin pistas locales, precios en euros más una web en español apuntan a España.
+  salida.pais_probable = PAISES.find(([, re]) => re.test(pista))?.[0]
+    || (/€|\bEUR\b/.test(pista) && /^es\b|\/es(\/|$)/i.test(`${w.idioma || ''} ${w.url || ''}`) ? 'ES' : null);
   const celdas = (ig.posts || []).filter((p) => p.img).slice(0, 9).map((p, k) => ({ ad: { img: p.img, id: p.id }, etiqueta: `P${k + 1} ${p.tipo}${p.likes != null ? ` · ${p.likes} likes` : ''}` }));
   if (w.captura) celdas.unshift({ ad: { img: w.captura, id: 'web' }, etiqueta: 'WEB' });
   salida.hoja = await hojaDeContacto('marca', celdas);
