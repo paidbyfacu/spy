@@ -61,7 +61,7 @@ async function abrirNavegador() {
       return await chromium.launch({ headless: !HEADED, ...extra, args: ['--disable-blink-features=AutomationControlled'] });
     } catch {}
   }
-  console.error('No encontré Chrome, Edge ni Chromium. Instala Chrome o corre: npx playwright install chromium');
+  console.error(`No encontré Chrome, Edge ni Chromium. Instala Chrome o corre dentro de "${DIR}": npx playwright-core install chromium`);
   process.exit(2);
 }
 

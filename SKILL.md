@@ -12,7 +12,7 @@ Habla con el usuario en su idioma, por defecto español neutro. En los textos de
 
 ## 1. Preparar, solo la primera vez
 
-Si no existe `<skill>/scripts/node_modules/playwright-core`, corre `npm install --prefix "<skill>/scripts"`. Usa el Chrome o el Edge instalados; si no hay ninguno, `npx playwright install chromium`.
+Si no existe `<skill>/scripts/node_modules/playwright-core`, corre `npm install --prefix "<skill>/scripts"`. Usa el Chrome o el Edge instalados; si no hay ninguno, corre `npx playwright-core install chromium` con `<skill>/scripts` como carpeta actual, así baja el navegador que corresponde a la versión instalada. En Windows, `npm.cmd` y `npx.cmd` evitan el error de ejecución de scripts de PowerShell.
 
 ## 2. Leer los argumentos
 
