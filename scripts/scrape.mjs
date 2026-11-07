@@ -542,6 +542,7 @@ async function leerInstagram(valor) {
       seguidores: u?.follower_count ?? null, seguidos: u?.following_count ?? null,
       verificada: !!u?.is_verified, privada: !!u?.is_private,
       resumen_publico: meta.descripcion,
+      web_externa: u?.external_url || u?.bio_links?.find((l) => l?.url)?.url || null,
       avatar,
       posts: posts.map(({ imagen_url, ...p }) => p),
     };
@@ -566,12 +567,14 @@ async function buscarAnunciante({ nombres, dominio }) {
       const nombre = norm(n.page_name);
       const pts = (claves.some((c) => nombre === c) ? 100 : claves.some((c) => nombre.includes(c) || c.includes(nombre)) ? 30 : 0) + (dominio && n.dominio.endsWith(dominio) ? 50 : 0);
       if (!pts) continue;
-      candidatos[k] ??= { page_id: k, page_name: n.page_name, puntos: 0, anuncios_vistos: 0 };
+      candidatos[k] ??= { page_id: k, page_name: n.page_name, puntos: 0, anuncios_vistos: 0, dominios: {} };
       candidatos[k].puntos += pts;
       candidatos[k].anuncios_vistos++;
+      if (n.dominio) candidatos[k].dominios[n.dominio] = (candidatos[k].dominios[n.dominio] || 0) + 1;
     }
   }
-  return Object.values(candidatos).sort((a, b) => b.puntos - a.puntos).slice(0, 3);
+  return Object.values(candidatos).sort((a, b) => b.puntos - a.puntos).slice(0, 3)
+    .map((c) => ({ ...c, dominios: Object.entries(c.dominios).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([d]) => d) }));
 }
 
 async function leerMarca() {
@@ -579,11 +582,37 @@ async function leerMarca() {
   const salida = { generado: new Date().toISOString(), nicho: args.nicho || '' };
   if (args.web) { log(`Leyendo la web ${args.web}…`); salida.web = await leerWeb(String(args.web)).catch((e) => ({ url: args.web, error: e.message })); }
   if (args.ig) { log(`Leyendo el Instagram ${args.ig}…`); salida.instagram = await leerInstagram(String(args.ig)); }
+  // Si falta uno de los dos, lo busca en el otro: el Instagram entre los links de la web, la web en la bio.
+  if (!args.ig && salida.web?.redes) {
+    const usuario = salida.web.redes.map((h) => h.match(/instagram\.com\/([A-Za-z0-9._]{2,30})/i)?.[1]).find((u) => u && !/^(p|reels?|stories|explore|accounts|tv|direct)$/i.test(u));
+    if (usuario) {
+      log(`Encontré su Instagram en la web: @${usuario}. Leyéndolo…`);
+      salida.instagram = { ...await leerInstagram(usuario), encontrado_en: 'web' };
+    }
+  }
+  // Sin sesión Instagram no muestra el link de la bio: la web sale de un dominio escrito en la bio o, más abajo, del destino de sus anuncios.
+  const agregador = /linktr\.ee|beacons\.ai|bio\.link|linkin\.bio|lnk\.bio|taplink|campsite\.bio|hoo\.be|msha\.ke|wa\.me|whatsapp|instagram\.com|facebook\.com|fb\.me|fb\.com|tiktok\.com|youtube\.com|youtu\.be|t\.me|bit\.ly|hotmart|mercadolibre|amazon\./i;
+  const leerWebHallada = async (url, donde) => {
+    log(`Encontré su web ${donde}: ${url}. Leyéndola…`);
+    salida.web = await leerWeb(url).catch((e) => ({ url, error: e.message }));
+    salida.web.encontrado_en = 'instagram';
+  };
+  if (!args.web && salida.instagram) {
+    const enBio = salida.instagram.web_externa || salida.instagram.bio?.match(/(?:https?:\/\/)?(?:www\.)?[a-z0-9-]+(?:\.[a-z0-9-]+)*\.(?:com|net|org|shop|store|online|site|app|io|co|ai|me|tv|club|academy|fit|life|ar|mx|es|cl|pe|uy|ec|bo|py|ve|br|pt|us|uk|it|fr|de)(?:\.[a-z]{2})?\b(?:\/\S*)?/i)?.[0];
+    if (enBio && !agregador.test(enBio)) await leerWebHallada(enBio, 'en la bio de Instagram');
+  }
   const ig = salida.instagram || {};
-  const w = salida.web || {};
+  let w = salida.web || {};
   let dominio = '';
   try { dominio = new URL(w.url || '').hostname.replace(/^www\./, ''); } catch {}
   salida.biblioteca = await buscarAnunciante({ nombres: [ig.nombre, ig.usuario, w.titulo?.split(/[|\-–·:]/)[0]?.trim()], dominio });
+  const destino = salida.biblioteca[0]?.dominios.find((d) => !agregador.test(d));
+  if (!args.web && (!salida.web || salida.web.error) && destino) {
+    await leerWebHallada(destino, 'en sus anuncios');
+    salida.web.encontrado_en = 'anuncios';
+    w = salida.web;
+    try { dominio = new URL(w.url || '').hostname.replace(/^www\./, ''); } catch {}
+  }
   const pista = [w.idioma, dominio, w.texto, ...(w.precios || []), ig.bio].join(' ');
   // Sin pistas locales, precios en euros más una web en español apuntan a España.
   salida.pais_probable = PAISES.find(([, re]) => re.test(pista))?.[0]

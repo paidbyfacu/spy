@@ -17,6 +17,9 @@
     "precio": "Precios que encontraste, con su moneda.",
     "publico": "A quién le habla.",
     "tono": "Cómo habla: cercano, técnico, motivacional.",
+    "objetivo": "Qué tiene que hacer la gente con el anuncio: comprar en la web, escribir por WhatsApp, dejar sus datos.",
+    "presupuesto": "Lo que invierte por mes en Meta, si lo dijo el usuario. Si no lo dijo, déjalo vacío.",
+    "supuestos": ["Cada dato que dedujiste y el usuario no confirmó, como 'el país es México, por el dominio .mx'. Vacío si confirmó todo."],
     "fortalezas": [
       { "texto": "Qué ya hace bien, con la evidencia.", "anuncios": ["id de un anuncio propio, si hay"] }
     ],

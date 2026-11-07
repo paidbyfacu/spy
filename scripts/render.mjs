@@ -317,10 +317,12 @@ function vistaMarca() {
     ${web.precios?.length ? `<p class="mini-tit">Precios en la web</p><div class="pastillas">${web.precios.slice(0, 8).map((p) => `<span>${esc(p)}</span>`).join('')}</div>` : ''}
     ${web.plataforma?.length ? `<p class="mini-tit">Hecha con</p><div class="pastillas">${web.plataforma.map((p) => `<span>${esc(p.charAt(0).toUpperCase() + p.slice(1))}</span>`).join('')}</div>` : ''}
   </div>` : '';
-  const ficha = [['Qué vende', L.producto], ['Oferta', L.oferta], ['Precio', L.precio], ['A quién', L.publico], ['Cómo habla', L.tono]].filter(([, v]) => v);
+  const ficha = [['Qué vende', L.producto], ['Oferta', L.oferta], ['Precio', L.precio], ['A quién', L.publico], ['Cómo habla', L.tono], ['Objetivo de los anuncios', L.objetivo], ['Presupuesto mensual', L.presupuesto]].filter(([, v]) => v);
+  const supuestos = (L.supuestos || []).filter(Boolean);
   const lectura = A.marca_leida ? `<div class="marca-lectura">
     ${L.resumen ? `<p class="lede rv">${esc(L.resumen)}</p>` : ''}
     ${ficha.length ? `<dl class="ficha rv">${ficha.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>` : ''}
+    ${supuestos.length ? `<p class="supuestos rv"><strong>Lo que supusimos sin que lo confirmes:</strong> ${supuestos.map((s) => esc(s.trim().replace(/\.?$/, '.'))).join(' ')}</p>` : ''}
     ${L.fortalezas?.length || L.huecos?.length ? `<div class="dos-col">
       ${L.fortalezas?.length ? `<div class="col-lista si rv"><h3>A tu favor</h3>${puntos(L.fortalezas, 'si')}</div>` : ''}
       ${L.huecos?.length ? `<div class="col-lista no rv"><h3>Lo que falta</h3>${puntos(L.huecos, 'no')}</div>` : ''}
@@ -636,10 +638,13 @@ h4 { font-size: 1rem; font-weight: 700; }
 .nav-barra span { margin-left: 10px; flex: 1; min-width: 0; background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 3px 12px; font-size: .78rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .navegador img { display: block; width: 100%; }
 .marca-lectura { display: grid; gap: 18px; }
-.ficha { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
-.ficha div { background: var(--bg); padding: 16px 18px; display: grid; gap: 4px; align-content: start; }
+.ficha { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); background: var(--bg); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+/* Bordes en cada celda y no un gap sobre fondo gris: así la última fila incompleta no deja un hueco gris. */
+.ficha div { padding: 16px 18px; display: grid; gap: 4px; align-content: start; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); margin: 0 -1px -1px 0; }
 .ficha dt { font-size: .8rem; color: var(--muted); font-weight: 600; }
 .ficha dd { font-size: .98rem; color: var(--ink); }
+.supuestos { font-size: .9rem; color: var(--muted); max-width: 80ch; }
+.supuestos strong { color: var(--ink-2); }
 .en-meta-top { display: flex; align-items: center; gap: 10px; }
 .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
 .kpis div { background: var(--bg); padding: 12px 14px; display: grid; gap: 2px; align-content: start; }
