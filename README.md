@@ -77,6 +77,7 @@ Todo queda en `Documentos/spy`, con una carpeta por marca y por fecha. Los perfi
 Claude los corre por ti. Si quieres hacerlo a mano, desde `scripts/`:
 
 ```bash
+node actualizar.mjs
 node contexto.mjs --dir ~/mi-proyecto
 node scrape.mjs marca --ig tumarca --web tumarca.com --nicho "lo que vendes" --out ~/Documents/spy/tumarca
 node scrape.mjs descubrir --q "palabra 1" --q "palabra 2" --pais AR --out ~/Documents/spy/tumarca
@@ -85,7 +86,7 @@ node scrape.mjs imagenes --out ~/Documents/spy/tumarca
 node render.mjs ~/Documents/spy/tumarca --modo html
 ```
 
-`contexto.mjs` no abre el navegador: devuelve en JSON lo que encontró de la marca en los CLAUDE.md, la memoria y los archivos de la carpeta, sin abrir `.env`, claves ni credenciales. `render.mjs` necesita `analisis.json`, que escribe Claude con la forma de `plantilla-analisis.json`. Opciones: `--pais` con un código de dos letras o `ALL`, `--max-ganadores 120`, `--max-nuevos 60`, `--max-apagados 60`, `--max-descubrir 150` y `--ver` para ver el navegador.
+`actualizar.mjs` pone el skill al día con este repositorio y responde en JSON si cambió algo. `contexto.mjs` no abre el navegador: devuelve en JSON lo que encontró de la marca en los CLAUDE.md, la memoria y los archivos de la carpeta, sin abrir `.env`, claves ni credenciales. `render.mjs` necesita `analisis.json`, que escribe Claude con la forma de `plantilla-analisis.json`. Opciones: `--pais` con un código de dos letras o `ALL`, `--max-ganadores 120`, `--max-nuevos 60`, `--max-apagados 60`, `--max-descubrir 150` y `--ver` para ver el navegador.
 
 ## Qué hace y qué no
 
@@ -96,12 +97,18 @@ node render.mjs ~/Documents/spy/tumarca --modo html
 
 ## Actualizar
 
+No hace falta: cada vez que escribes `/spy`, el skill revisa este repositorio y, si hay una versión nueva, se pone al día solo antes de empezar, sin interrumpirte. Funciona igual si lo instalaste con Git o con el ZIP. Si cambian las dependencias, corre `npm install` por su cuenta. Tus perfiles de `marcas/` nunca se tocan, y si no hay internet sigue con la versión que tienes.
+
+Si clonaste el repo y le hiciste cambios propios, no los pisa: en ese caso no se actualiza hasta que los guardes o los descartes.
+
+Para apagarlo, crea un archivo vacío llamado `.sin-actualizar` en la carpeta del skill o define la variable de entorno `SPY_SIN_ACTUALIZAR=1`. Para actualizar a mano:
+
 ```bash
 git -C ~/.claude/skills/spy pull
 npm install --prefix ~/.claude/skills/spy/scripts
 ```
 
-En Windows, con `$env:USERPROFILE\.claude\skills\spy` y `npm.cmd`. Tus perfiles de `marcas/` no se tocan. Meta cambia la biblioteca de vez en cuando: si un día deja de traer anuncios, actualiza primero.
+En Windows, con `$env:USERPROFILE\.claude\skills\spy` y `npm.cmd`.
 
 ## Desinstalar
 

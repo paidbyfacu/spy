@@ -1,4 +1,6 @@
 scripts/node_modules/
 marcas/
+.actualizacion.json
+.sin-actualizar
 .DS_Store
 Thumbs.db
