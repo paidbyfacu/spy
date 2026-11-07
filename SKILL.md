@@ -85,7 +85,7 @@ Carpeta de trabajo: `~/Documents/spy/<slug>-<AAAA-MM-DD>`, con el slug del usuar
 node "<skill>/scripts/scrape.mjs" marca --ig instagram.com/tumarca --web tumarca.com --nicho fitness --out "<carpeta>"
 ```
 
-Tarda menos de un minuto. Lee el perfil público de Instagram sin login, con bio, seguidores y las últimas publicaciones; la web, con su portada, títulos, botones, precios, píxeles y hasta 4 páginas internas; y busca si la marca ya anuncia en la biblioteca. Escribe `marca.json` y `img/hoja-marca.jpg`, una hoja con la portada de la web y los últimos posts.
+Tarda menos de un minuto. Lee el perfil público de Instagram sin login, con bio, seguidores y las últimas publicaciones; la web, con su portada, títulos, botones, precios, píxeles y hasta 3 páginas internas; y busca si la marca ya anuncia en la biblioteca. Escribe `marca.json` y `img/hoja-marca.jpg`, una hoja con la portada de la web y los últimos posts.
 
 Si le pasas solo uno de los dos, busca el otro solo: el Instagram entre los links de la web, y la web en el link de la bio, salvo que sea un Linktree o algo parecido. Lo que encontró así lleva `encontrado_en`: si esa cuenta o esa web no parecen de la misma marca, ignóralas.
 
